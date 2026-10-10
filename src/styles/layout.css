@@ -65,7 +65,9 @@
 
   overflow: hidden;
 
-  background: var(--color-surface);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
+    var(--color-surface);
 
   border-right: 1px solid var(--color-border);
 
@@ -143,7 +145,9 @@
 
   overflow: hidden;
 
-  background: var(--color-surface);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
+    var(--color-surface);
 
   border-left: 1px solid var(--color-border);
 
@@ -237,9 +241,16 @@
 
   padding: 0 18px;
 
-  background: var(--color-surface);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    ),
+    var(--color-surface);
 
   border-bottom: 1px solid var(--color-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
   z-index: 100;
 }
@@ -247,32 +258,40 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
 
   min-width: 0;
 }
 
-.brandTitle {
-  margin: 0;
-
-  color: var(--color-text);
-
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.2;
-
-  white-space: nowrap;
+.brandLogo {
+  display: block;
+  width: 188px;
+  height: 52px;
+  object-fit: contain;
 }
 
-.brandSubtitle {
-  margin: 2px 0 0;
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  color: var(--color-text-muted);
+  min-height: 20px;
+  padding: 4px 8px;
 
-  font-size: 11px;
-  font-weight: 500;
+  border-radius: 999px;
 
-  white-space: nowrap;
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.statusPill.active {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
 }
 
 .topbarActions {
@@ -289,25 +308,32 @@
   padding: 3px;
 
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: 12px;
 
   background: var(--color-surface-muted);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .themeButton {
   display: grid;
   place-items: center;
 
-  width: 29px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   padding: 0;
 
-  border-radius: 4px;
+  border-radius: 9px;
 
   background: transparent;
   color: var(--color-text-muted);
 
   cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .themeButton:hover {
@@ -401,7 +427,12 @@
     padding: 0 12px;
   }
 
-  .brandSubtitle {
+  .brandLogo {
+    width: 138px;
+    height: 40px;
+  }
+
+  .statusPill {
     display: none;
   }
 
