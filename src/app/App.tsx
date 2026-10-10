@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { MouseEvent } from "react";
 
@@ -35,6 +35,12 @@ export default function App() {
 
   const settings = useEditorSettings();
   const [viewResetKey, setViewResetKey] = useState(0);
+  const [showZoomProcessing, setShowZoomProcessing] = useState(false);
+  const [zoomOperationPending, setZoomOperationPending] = useState(false);
+  const previousZoomRef = useRef(settings.zoom);
+  const zoomProcessingPendingRef = useRef(false);
+  const zoomProcessingTimerRef = useRef<number | null>(null);
+  const previousProcessingBusyRef = useRef(false);
 
   /*
   |--------------------------------------------------------------------------
@@ -122,6 +128,54 @@ export default function App() {
     displayCanvasRef: canvas.displayCanvasRef,
     settings: processingSettings,
   });
+
+  useEffect(() => {
+    const zoomChanged = previousZoomRef.current !== settings.zoom;
+    previousZoomRef.current = settings.zoom;
+
+    if (zoomChanged) {
+      zoomProcessingPendingRef.current = true;
+      setZoomOperationPending(true);
+      setShowZoomProcessing(false);
+
+      if (zoomProcessingTimerRef.current !== null) {
+        window.clearTimeout(zoomProcessingTimerRef.current);
+      }
+
+      zoomProcessingTimerRef.current = null;
+    }
+
+    if (processing.busy && zoomProcessingPendingRef.current) {
+      if (zoomProcessingTimerRef.current === null) {
+        zoomProcessingTimerRef.current = window.setTimeout(() => {
+          if (zoomProcessingPendingRef.current) {
+            setShowZoomProcessing(true);
+          }
+          zoomProcessingTimerRef.current = null;
+        }, 1000);
+      }
+    } else if (!processing.busy && previousProcessingBusyRef.current) {
+      zoomProcessingPendingRef.current = false;
+      setZoomOperationPending(false);
+      setShowZoomProcessing(false);
+
+      if (zoomProcessingTimerRef.current !== null) {
+        window.clearTimeout(zoomProcessingTimerRef.current);
+        zoomProcessingTimerRef.current = null;
+      }
+    }
+
+    previousProcessingBusyRef.current = processing.busy;
+  }, [settings.zoom, processing.busy]);
+
+  useEffect(
+    () => () => {
+      if (zoomProcessingTimerRef.current !== null) {
+        window.clearTimeout(zoomProcessingTimerRef.current);
+      }
+    },
+    [],
+  );
 
   const imageExport = useImageExport(canvas.displayCanvasRef);
 
@@ -355,6 +409,8 @@ export default function App() {
             busy={processing.busy}
             processingProgress={processing.progress}
             processingStage={processing.stage}
+            zoomProcessing={showZoomProcessing}
+            zoomOperationPending={zoomOperationPending}
             uploadProgress={upload.uploadProgress}
             error={processing.error}
             uploadError={upload.error}
