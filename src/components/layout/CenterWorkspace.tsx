@@ -14,6 +14,8 @@ type CenterWorkspaceProps = {
   busy: boolean;
   processingProgress: number;
   processingStage: string;
+  zoomProcessing: boolean;
+  zoomOperationPending: boolean;
   uploadProgress: {
     phase: 'reading' | 'decoding'
     progress: number
@@ -41,6 +43,8 @@ export function CenterWorkspace({
   busy,
   processingProgress,
   processingStage,
+  zoomProcessing,
+  zoomOperationPending,
   uploadProgress,
   error,
   uploadError,
@@ -92,10 +96,16 @@ export function CenterWorkspace({
         />
       )}
       <ProcessingOverlay
-        visible={isUploading || (hasImage && busy)}
+        visible={isUploading || (hasImage && busy && !zoomOperationPending)}
         progress={currentProgress}
         stage={progressStage}
       />
+      {hasImage && busy && zoomProcessing && !isUploading && (
+        <div className="zoomProcessingHint" role="status" aria-live="polite">
+          <span className="zoomProcessingIcon" aria-hidden="true" />
+          <span>Updating zoom…</span>
+        </div>
+      )}
       {hasImage && error && (
         <div className="errorMessage" role="alert">
           {error}
