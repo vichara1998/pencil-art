@@ -298,6 +298,7 @@ export default function App() {
         onUpload={upload.openFilePicker}
         onDownload={imageExport.openExport}
         canDownload={Boolean(upload.image)}
+        hasImage={Boolean(upload.image)}
       />
 
       {/*
