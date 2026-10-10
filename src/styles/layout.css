@@ -263,6 +263,20 @@
   min-width: 0;
 }
 
+.brandHomeButton {
+  display: block;
+  flex: 0 1 auto;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+}
+
+.brandHomeButton:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
 .brandLogo {
   display: block;
   width: 188px;
