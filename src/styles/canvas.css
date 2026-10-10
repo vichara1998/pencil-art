@@ -342,6 +342,46 @@
   transition: width 180ms ease-out;
 }
 
+.zoomProcessingHint {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 25;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 10px 13px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+
+  background: var(--color-processing-card);
+  box-shadow: var(--shadow-md);
+
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.zoomProcessingIcon {
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid var(--color-processing-spinner);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+
+  animation: processingSpin 700ms linear infinite;
+}
+
+@keyframes processingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /*
 |--------------------------------------------------------------------------
 | Mobile
