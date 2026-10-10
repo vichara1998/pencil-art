@@ -63,10 +63,15 @@ export function CanvasViewport({
     setPan({ x: 0, y: 0 });
   }, [resetViewKey]);
 
+  const stageStyle: CSSProperties = {
+    width: canvasWidth * zoom,
+    height: canvasHeight * zoom,
+    transform: `translate(${pan.x}px, ${pan.y}px)`,
+  };
+
   const canvasStyle: CSSProperties = {
-    width: canvasWidth,
-    height: canvasHeight,
-    transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+    width: canvasWidth * zoom,
+    height: canvasHeight * zoom,
   };
 
   const handlePointerDown = (event: PointerEvent<HTMLCanvasElement>) => {
@@ -235,10 +240,11 @@ export function CanvasViewport({
       onPointerUp={handleViewportPointerUp}
       onPointerCancel={handleViewportPointerUp}
     >
-      <div className="resultCanvasStage" style={canvasStyle}>
+      <div className="resultCanvasStage" style={stageStyle}>
         <canvas
           ref={canvasRef}
           className={`resultCanvas ${isPanning ? "resultCanvasPanning" : ""}`}
+          style={canvasStyle}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -252,7 +258,7 @@ export function CanvasViewport({
             style={{
               gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
               gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))`,
-              fontSize: `${Math.min(18, Math.max(6, cellSize * 0.52))}px`,
+              fontSize: `${Math.min(18, Math.max(6, cellSize * zoom * 0.52))}px`,
             }}
             aria-hidden="true"
           >
