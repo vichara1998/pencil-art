@@ -37,6 +37,8 @@ export default function App() {
   const settings = useEditorSettings();
   const [viewResetKey, setViewResetKey] = useState(0);
   const [isHomeConfirmOpen, setIsHomeConfirmOpen] = useState(false);
+  const [filterSelectedColors, setFilterSelectedColors] = useState<number[]>([]);
+  const [paletteFilterEnabled, setPaletteFilterEnabled] = useState(false);
   const [showZoomProcessing, setShowZoomProcessing] = useState(false);
   const [zoomOperationPending, setZoomOperationPending] = useState(false);
   const previousZoomRef = useRef(settings.zoom);
@@ -107,6 +109,10 @@ export default function App() {
       zoom: {
         zoom: settings.zoom,
       },
+      paletteFilter: {
+        enabled: paletteFilterEnabled,
+        selectedColorIndices: filterSelectedColors,
+      },
     }),
     [
       settings.mode,
@@ -121,6 +127,8 @@ export default function App() {
       settings.pencilColor,
       settings.paperBrightness,
       settings.zoom,
+      paletteFilterEnabled,
+      filterSelectedColors,
     ],
   );
 
@@ -130,6 +138,25 @@ export default function App() {
     displayCanvasRef: canvas.displayCanvasRef,
     settings: processingSettings,
   });
+
+  useEffect(() => {
+    setFilterSelectedColors([]);
+    setPaletteFilterEnabled(false);
+  }, [upload.image]);
+
+  useEffect(() => {
+    setFilterSelectedColors((current) =>
+      current.filter((index) => index < processing.palette.length),
+    );
+  }, [processing.palette.length]);
+
+  const handleToggleFilterColor = useCallback((index: number) => {
+    setFilterSelectedColors((current) =>
+      current.includes(index)
+        ? current.filter((selectedIndex) => selectedIndex !== index)
+        : [...current, index],
+    );
+  }, []);
 
   useEffect(() => {
     const zoomChanged = previousZoomRef.current !== settings.zoom;
@@ -189,6 +216,8 @@ export default function App() {
   const handleReturnHome = useCallback(() => {
     upload.clearImage();
     canvas.clearSelection();
+    setFilterSelectedColors([]);
+    setPaletteFilterEnabled(false);
     settings.setZoom(1);
     setViewResetKey((current) => current + 1);
     panels.showLeftPanel();
@@ -458,6 +487,10 @@ export default function App() {
             selectedColorIndex={
               selectedCellData ? selectedCellData.colorNumber - 1 : undefined
             }
+            filterSelectedColors={filterSelectedColors}
+            filterEnabled={paletteFilterEnabled}
+            onToggleFilterColor={handleToggleFilterColor}
+            onFilterEnabledChange={setPaletteFilterEnabled}
           />
         }
       />
