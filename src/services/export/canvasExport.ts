@@ -1,5 +1,4 @@
 import {
-  calculateAspectRatio,
   getCanvasContext,
 } from '../../utils'
 
@@ -48,11 +47,23 @@ export function calculateExportDimensions(
     }
   }
 
-  return calculateAspectRatio(
-    sourceWidth,
-    sourceHeight,
-    targetLongEdge,
-  )
+  if (sourceWidth >= sourceHeight) {
+    return {
+      width: targetLongEdge,
+      height: Math.max(
+        1,
+        Math.round((sourceHeight / sourceWidth) * targetLongEdge),
+      ),
+    }
+  }
+
+  return {
+    width: Math.max(
+      1,
+      Math.round((sourceWidth / sourceHeight) * targetLongEdge),
+    ),
+    height: targetLongEdge,
+  }
 }
 
 export function createExportCanvas(
