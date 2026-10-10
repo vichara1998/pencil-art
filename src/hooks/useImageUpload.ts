@@ -38,27 +38,41 @@ export function useImageUpload() {
     setIsDragging,
   ] = useState(false)
 
+  const [
+    uploadProgress,
+    setUploadProgress,
+  ] = useState<{
+    phase: 'reading' | 'decoding'
+    progress: number
+  } | null>(null)
+
   const fileInputRef =
     useRef<HTMLInputElement>(null)
 
   const loadRequestRef =
     useRef(0)
 
+  const fileReaderRef =
+    useRef<FileReader | null>(null)
+
   const loadFile = useCallback(
     (file: File) => {
       setError('')
 
+      fileReaderRef.current?.abort()
+
+      const loadRequest =
+        ++loadRequestRef.current
+
       if (
         !isSupportedImageFile(file)
       ) {
+        setUploadProgress(null)
         setError(
           'Unsupported image format. Please use PNG, JPG, WEBP, BMP, or GIF.',
         )
         return
       }
-
-      const loadRequest =
-        ++loadRequestRef.current
 
       void saveSourceImage(file).catch(() => {
         if (
@@ -71,41 +85,81 @@ export function useImageUpload() {
         }
       })
 
-      const objectUrl =
-        URL.createObjectURL(file)
+      setUploadProgress({
+        phase: 'reading',
+        progress: 0,
+      })
 
-      const nextImage =
-        new Image()
+      const reader = new FileReader()
+      fileReaderRef.current = reader
 
-      nextImage.onload = () => {
-        URL.revokeObjectURL(
-          objectUrl,
-        )
-
+      reader.onprogress = (event) => {
         if (
-          loadRequest ===
-          loadRequestRef.current
+          loadRequest === loadRequestRef.current &&
+          event.lengthComputable
         ) {
-          setImage(nextImage)
+          setUploadProgress({
+            phase: 'reading',
+            progress: Math.round(
+              (event.loaded / event.total) * 95,
+            ),
+          })
         }
       }
 
-      nextImage.onerror = () => {
-        URL.revokeObjectURL(
-          objectUrl,
-        )
-
-        if (
-          loadRequest ===
-          loadRequestRef.current
-        ) {
-          setError(
-            'Unable to load the selected image.',
-          )
+      reader.onerror = () => {
+        if (loadRequest === loadRequestRef.current) {
+          setUploadProgress(null)
+          setError('Unable to read the selected image.')
         }
       }
 
-      nextImage.src = objectUrl
+      reader.onabort = () => {
+        if (loadRequest === loadRequestRef.current) {
+          setUploadProgress(null)
+        }
+      }
+
+      reader.onload = () => {
+        if (
+          loadRequest !== loadRequestRef.current ||
+          !(reader.result instanceof ArrayBuffer)
+        ) {
+          return
+        }
+
+        setUploadProgress({
+          phase: 'decoding',
+          progress: 95,
+        })
+
+        const objectUrl = URL.createObjectURL(
+          new Blob([reader.result], { type: file.type }),
+        )
+        const nextImage = new Image()
+
+        nextImage.onload = () => {
+          URL.revokeObjectURL(objectUrl)
+
+          if (loadRequest === loadRequestRef.current) {
+            setImage(nextImage)
+            setUploadProgress(null)
+          }
+        }
+
+        nextImage.onerror = () => {
+          URL.revokeObjectURL(objectUrl)
+
+          if (loadRequest === loadRequestRef.current) {
+            setUploadProgress(null)
+            setError('Unable to load the selected image.')
+          }
+        }
+
+        nextImage.src = objectUrl
+      }
+
+      reader.readAsArrayBuffer(file)
     },
     [],
   )
@@ -123,6 +177,8 @@ export function useImageUpload() {
 
     return () => {
       isActive = false
+      loadRequestRef.current++
+      fileReaderRef.current?.abort()
     }
   }, [loadFile])
 
@@ -213,8 +269,11 @@ export function useImageUpload() {
   const clearImage =
     useCallback(() => {
       loadRequestRef.current++
+      fileReaderRef.current?.abort()
+      fileReaderRef.current = null
       setImage(null)
       setError('')
+      setUploadProgress(null)
 
       void clearSavedSourceImage().catch(
         () => {},
@@ -225,6 +284,7 @@ export function useImageUpload() {
     image,
     error,
     isDragging,
+    uploadProgress,
 
     fileInputRef,
 
