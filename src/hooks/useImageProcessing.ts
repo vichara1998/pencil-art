@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react'
 
@@ -57,13 +58,29 @@ export function useImageProcessing({
   ] = useState(false)
 
   const [
+    progress,
+    setProgress,
+  ] = useState(0)
+
+  const [
+    stage,
+    setStage,
+  ] = useState('Preparing image')
+
+  const [
     error,
     setError,
   ] = useState('')
 
+  const requestIdRef = useRef(0)
+
   const processImage =
-    useCallback(() => {
+    useCallback(async () => {
+      const requestId = ++requestIdRef.current
+
       if (!image) {
+        setBusy(false)
+        setProgress(0)
         return
       }
 
@@ -80,151 +97,155 @@ export function useImageProcessing({
         return
       }
 
+      const isCurrentRequest = () =>
+        requestId === requestIdRef.current
+      const yieldToBrowser = () =>
+        new Promise<void>((resolve) => {
+          window.setTimeout(resolve, 0)
+        })
+
       setBusy(true)
       setError('')
+      setProgress(3)
+      setStage('Preparing image')
 
-      window.requestAnimationFrame(
-        () => {
-          try {
-            const dimensions =
-              calculateAspectRatio(
-                image.naturalWidth ||
-                  image.width,
-                image.naturalHeight ||
-                  image.height,
-                LIMITS.processing
-                  .maxDimension,
-              )
+      try {
+        await yieldToBrowser()
+        if (!isCurrentRequest()) return
 
-            sourceCanvas.width =
-              dimensions.width
+        const dimensions =
+          calculateAspectRatio(
+            image.naturalWidth || image.width,
+            image.naturalHeight || image.height,
+            LIMITS.processing.maxDimension,
+          )
 
-            sourceCanvas.height =
-              dimensions.height
+        sourceCanvas.width = dimensions.width
+        sourceCanvas.height = dimensions.height
 
-            const sourceContext =
-              getCanvasContext(
-                sourceCanvas,
-              )
+        const sourceContext =
+          getCanvasContext(sourceCanvas)
 
-            sourceContext.clearRect(
-              0,
-              0,
-              dimensions.width,
-              dimensions.height,
-            )
+        sourceContext.clearRect(
+          0,
+          0,
+          dimensions.width,
+          dimensions.height,
+        )
 
-            sourceContext.drawImage(
-              image,
-              0,
-              0,
-              dimensions.width,
-              dimensions.height,
-            )
+        sourceContext.drawImage(
+          image,
+          0,
+          0,
+          dimensions.width,
+          dimensions.height,
+        )
 
-            const originalData =
-              sourceContext.getImageData(
-                0,
-                0,
-                dimensions.width,
-                dimensions.height,
-              )
+        const originalData =
+          sourceContext.getImageData(
+            0,
+            0,
+            dimensions.width,
+            dimensions.height,
+          )
 
-            const adjustedData =
-              adjustImage(
-                originalData,
-                settings.image
-                  .brightness,
-                settings.image
-                  .contrast,
-              )
+        setProgress(18)
+        setStage('Adjusting image')
+        await yieldToBrowser()
+        if (!isCurrentRequest()) return
 
-            const newPalette =
-              quantizeColors(
-                adjustedData.data,
-                dimensions.width,
-                dimensions.height,
-                settings.color.colors,
-              )
+        const adjustedData =
+          adjustImage(
+            originalData,
+            settings.image.brightness,
+            settings.image.contrast,
+          )
 
-            const edges =
-              detectEdges(
-                adjustedData.data,
-                dimensions.width,
-                dimensions.height,
-                settings.pencil
-                  .sensitivity,
-              )
+        setProgress(36)
+        setStage('Building color palette')
+        await yieldToBrowser()
+        if (!isCurrentRequest()) return
 
-            const thickEdges =
-              thickenEdges(
-                edges,
-                dimensions.width,
-                dimensions.height,
-                settings.pencil
-                  .thickness,
-              )
+        const newPalette =
+          quantizeColors(
+            adjustedData.data,
+            dimensions.width,
+            dimensions.height,
+            settings.color.colors,
+          )
 
-            const newCells =
-              analyzeGrid(
-                adjustedData.data,
-                thickEdges,
-                dimensions.width,
-                dimensions.height,
-                settings.grid.size,
-                newPalette,
-              )
+        setProgress(51)
+        setStage('Detecting pencil edges')
+        await yieldToBrowser()
+        if (!isCurrentRequest()) return
 
-            renderResult(
-              displayCanvas,
-              adjustedData,
-              thickEdges,
-              newPalette,
-              {
-                mode: settings.mode,
+        const edges =
+          detectEdges(
+            adjustedData.data,
+            dimensions.width,
+            dimensions.height,
+            settings.pencil.sensitivity,
+          )
 
-                pencilColor:
-                  settings.pencil
-                    .color,
+        setProgress(65)
+        setStage('Refining edges')
+        await yieldToBrowser()
+        if (!isCurrentRequest()) return
 
-                pencilDarkness:
-                  settings.pencil
-                    .darkness,
+        const thickEdges =
+          thickenEdges(
+            edges,
+            dimensions.width,
+            dimensions.height,
+            settings.pencil.thickness,
+          )
 
-                paperBrightness:
-                  settings.pencil
-                    .paperBrightness,
+        setProgress(77)
+        setStage('Analyzing grid')
+        await yieldToBrowser()
+        if (!isCurrentRequest()) return
 
-                gridSize:
-                  settings.grid.size,
+        const newCells =
+          analyzeGrid(
+            adjustedData.data,
+            thickEdges,
+            dimensions.width,
+            dimensions.height,
+            settings.grid.size,
+            newPalette,
+          )
 
-                zoom:
-                  settings.zoom.zoom,
-              },
-            )
+        setProgress(91)
+        setStage('Rendering artwork')
+        await yieldToBrowser()
+        if (!isCurrentRequest()) return
 
-            setPalette(
-              newPalette,
-            )
+        renderResult(
+          displayCanvas,
+          adjustedData,
+          thickEdges,
+          newPalette,
+          {
+            mode: settings.mode,
+            pencilColor: settings.pencil.color,
+            pencilDarkness: settings.pencil.darkness,
+            paperBrightness: settings.pencil.paperBrightness,
+            gridSize: settings.grid.size,
+            zoom: settings.zoom.zoom,
+          },
+        )
 
-            setCells(
-              newCells,
-            )
-
-            setBusy(false)
-          } catch (processingError) {
-            console.error(
-              processingError,
-            )
-
-            setError(
-              'Unable to process the image.',
-            )
-
-            setBusy(false)
-          }
-        },
-      )
+        setPalette(newPalette)
+        setCells(newCells)
+        setProgress(100)
+        setBusy(false)
+      } catch (processingError) {
+        if (isCurrentRequest()) {
+          console.error(processingError)
+          setError('Unable to process the image.')
+          setBusy(false)
+        }
+      }
     }, [
       image,
       sourceCanvasRef,
@@ -233,7 +254,11 @@ export function useImageProcessing({
     ])
 
   useEffect(() => {
-    processImage()
+    void processImage()
+
+    return () => {
+      requestIdRef.current++
+    }
   }, [processImage])
 
   return {
@@ -241,6 +266,8 @@ export function useImageProcessing({
     cells,
 
     busy,
+    progress,
+    stage,
     error,
 
     processImage,
