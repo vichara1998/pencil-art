@@ -47,6 +47,26 @@
     dialogEnter 160ms ease-out;
 }
 
+.homeConfirmDialog {
+  width: min(420px, 100%);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  animation: dialogEnter 160ms ease-out;
+}
+
+.homeConfirmDialog .dialogHeader {
+  border-bottom: 0;
+  padding-bottom: 8px;
+}
+
+.homeConfirmDialog .dialogSubtitle {
+  max-width: 340px;
+  line-height: 1.6;
+}
+
 @keyframes dialogEnter {
   from {
     opacity: 0;
