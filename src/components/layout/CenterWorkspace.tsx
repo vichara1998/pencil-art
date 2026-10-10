@@ -12,6 +12,12 @@ type CenterWorkspaceProps = {
   showNumbers: boolean;
   resetViewKey: number;
   busy: boolean;
+  processingProgress: number;
+  processingStage: string;
+  uploadProgress: {
+    phase: 'reading' | 'decoding'
+    progress: number
+  } | null;
   error: string;
   uploadError: string;
   isDragging: boolean;
@@ -33,6 +39,9 @@ export function CenterWorkspace({
   showNumbers,
   resetViewKey,
   busy,
+  processingProgress,
+  processingStage,
+  uploadProgress,
   error,
   uploadError,
   isDragging,
@@ -44,6 +53,16 @@ export function CenterWorkspace({
   onZoomChange,
   onCanvasClick,
 }: CenterWorkspaceProps) {
+  const isUploading = uploadProgress !== null
+  const progressStage = isUploading
+    ? uploadProgress.phase === 'reading'
+      ? 'Loading image'
+      : 'Opening image'
+    : processingStage
+  const currentProgress = isUploading
+    ? uploadProgress.progress
+    : processingProgress
+
   return (
     <div
       className={`centerWorkspace ${
@@ -61,21 +80,22 @@ export function CenterWorkspace({
           onUpload={onUpload}
         />
       ) : (
-        <>
-          <CanvasViewport
-            canvasRef={canvasRef}
-            zoom={zoom}
-            gridSize={gridSize}
-            cells={cells}
-            showNumbers={showNumbers}
-            resetViewKey={resetViewKey}
-            onZoomChange={onZoomChange}
-            onClick={onCanvasClick}
-          />
-
-          <ProcessingOverlay visible={busy} />
-        </>
+        <CanvasViewport
+          canvasRef={canvasRef}
+          zoom={zoom}
+          gridSize={gridSize}
+          cells={cells}
+          showNumbers={showNumbers}
+          resetViewKey={resetViewKey}
+          onZoomChange={onZoomChange}
+          onClick={onCanvasClick}
+        />
       )}
+      <ProcessingOverlay
+        visible={isUploading || (hasImage && busy)}
+        progress={currentProgress}
+        stage={progressStage}
+      />
       {hasImage && error && (
         <div className="errorMessage" role="alert">
           {error}
