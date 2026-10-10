@@ -3,6 +3,10 @@ export {
 } from './AppHeader'
 
 export {
+  HomeConfirmDialog,
+} from './HomeConfirmDialog'
+
+export {
   PanelToggle,
 } from './PanelToggle'
 
