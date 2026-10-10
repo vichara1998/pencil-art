@@ -3,17 +3,25 @@ import { rgbToHex } from "../../utils/color";
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy, Download } from "lucide-react";
 
-import { PanelSection } from "../common";
+import { PanelSection, Toggle } from "../common";
 import { downloadPalette } from "../../services/export";
 
 type PalettePreviewProps = {
   palette: RGB[];
   selectedColor?: number;
+  filterSelectedColors: number[];
+  filterEnabled: boolean;
+  onToggleFilterColor: (index: number) => void;
+  onFilterEnabledChange: (enabled: boolean) => void;
 };
 
 export function PalettePreview({
   palette,
   selectedColor,
+  filterSelectedColors,
+  filterEnabled,
+  onToggleFilterColor,
+  onFilterEnabledChange,
 }: PalettePreviewProps) {
   const [openColorIndex, setOpenColorIndex] = useState<number | null>(null);
   const [copiedColorIndex, setCopiedColorIndex] = useState<number | null>(null);
@@ -52,6 +60,8 @@ export function PalettePreview({
           {palette.map((color, index) => {
             const [r, g, b] = color;
             const hexCode = rgbToHex(r, g, b).toUpperCase();
+            const isFilterSelected =
+              filterEnabled && filterSelectedColors.includes(index);
 
             return (
               <div
@@ -70,17 +80,26 @@ export function PalettePreview({
                   className={[
                     "paletteItem",
                     selectedColor === index ? "paletteItemSelected" : "",
+                    isFilterSelected ? "paletteItemFilterSelected" : "",
                   ]
                     .filter(Boolean)
                     .join(" ")}
                   onClick={() => {
+                    if (filterEnabled) {
+                      onToggleFilterColor(index);
+                    }
                     setCopiedColorIndex(null);
                     setOpenColorIndex((current) =>
                       current === index ? null : index,
                     );
                   }}
+                  aria-pressed={isFilterSelected}
                   aria-expanded={openColorIndex === index}
-                  aria-label={`Color ${index + 1}`}
+                  aria-label={
+                    filterEnabled
+                      ? `Select color ${index + 1} for filtering`
+                      : `View color ${index + 1}`
+                  }
                   title={`Color ${index + 1}`}
                 >
                   <div
@@ -91,6 +110,11 @@ export function PalettePreview({
                   />
 
                   <span className="paletteName">{index + 1}</span>
+                  {isFilterSelected && (
+                    <span className="paletteFilterCheck" aria-hidden="true">
+                      <Check size={12} />
+                    </span>
+                  )}
                 </button>
 
                 {openColorIndex === index && (
@@ -124,6 +148,20 @@ export function PalettePreview({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {palette.length > 0 && (
+        <div className="paletteFilterControl">
+          <Toggle
+            label="Select colors to filter"
+            checked={filterEnabled}
+            onChange={onFilterEnabledChange}
+          />
+          <p className="controlDescription">
+            Turn on to select palette colors and isolate them in the image. Turn
+            off to return to the normal image.
+          </p>
         </div>
       )}
 
