@@ -1,0 +1,353 @@
+/*
+|--------------------------------------------------------------------------
+| Range controls
+|--------------------------------------------------------------------------
+*/
+
+.rangeControl {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin-bottom: 14px;
+}
+
+.rangeControl:last-child {
+  margin-bottom: 0;
+}
+
+.rangeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.rangeLabel {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.valueBadge {
+  min-width: 38px;
+
+  padding: 3px 7px;
+
+  border-radius: 5px;
+
+  background: var(--color-surface-muted);
+
+  color: var(--color-text-secondary);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-align: center;
+}
+
+.rangeControl input[type="range"] {
+  width: 100%;
+  height: 4px;
+
+  margin: 2px 0;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  border-radius: 999px;
+
+  background: var(--color-control-track);
+
+  cursor: pointer;
+}
+
+.rangeControl input[type="range"]::-webkit-slider-thumb {
+  width: 15px;
+  height: 15px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  border: 2px solid var(--color-control-thumb-border);
+  border-radius: 50%;
+
+  background: var(--color-primary);
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2);
+
+  cursor: pointer;
+}
+
+.rangeControl input[type="range"]::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid var(--color-control-thumb-border);
+  border-radius: 50%;
+
+  background: var(--color-primary);
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2);
+
+  cursor: pointer;
+}
+
+.rangeControl input[type="range"]:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Toggle
+|--------------------------------------------------------------------------
+*/
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  min-height: 36px;
+}
+
+.toggleLabel {
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.toggle {
+  position: relative;
+
+  flex-shrink: 0;
+
+  width: 38px;
+  height: 22px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 999px;
+
+  background: var(--color-switch-track);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast);
+}
+
+.toggle.checked {
+  background: var(--color-accent);
+}
+
+.toggle input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+
+  opacity: 0;
+
+  cursor: pointer;
+}
+
+.toggle:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.toggleTrack {
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: inherit;
+
+  pointer-events: none;
+}
+
+.toggleThumb {
+  position: absolute;
+
+  top: 3px;
+  left: 3px;
+
+  width: 16px;
+  height: 16px;
+
+  border-radius: 50%;
+
+  background: var(--color-surface);
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2);
+
+  transition:
+    transform var(--transition-fast);
+}
+
+.toggle.checked .toggleThumb {
+  transform: translateX(16px);
+}
+
+.toggle.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/*
+|--------------------------------------------------------------------------
+| View modes
+|--------------------------------------------------------------------------
+*/
+
+.modeGrid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+.modeButton {
+  min-height: 38px;
+
+  padding: 7px 8px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.modeButton:hover {
+  background: var(--color-surface-soft);
+
+  border-color: var(--color-border-strong);
+
+  color: var(--color-text);
+}
+
+.modeButtonActive {
+  border-color: var(--color-accent);
+
+  background: var(--color-accent-soft);
+
+  color: var(--color-accent);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Color controls
+|--------------------------------------------------------------------------
+*/
+
+.colorControl {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.colorPickerRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.colorPickerRow input[type="color"] {
+  width: 42px;
+  height: 34px;
+
+  padding: 3px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+
+  cursor: pointer;
+}
+
+.colorPickerValue {
+  flex: 1;
+
+  color: var(--color-text-secondary);
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+
+  font-size: 11px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Zoom control
+|--------------------------------------------------------------------------
+*/
+
+.zoomControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+}
+
+.zoomValue {
+  min-width: 55px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-align: center;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Reset / secondary control groups
+|--------------------------------------------------------------------------
+*/
+
+.controlActions {
+  display: flex;
+  gap: 8px;
+
+  margin-top: 10px;
+}
+
+.controlActions > * {
+  flex: 1;
+}

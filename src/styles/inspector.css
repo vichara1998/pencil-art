@@ -1,0 +1,503 @@
+/*
+|--------------------------------------------------------------------------
+| Palette
+|--------------------------------------------------------------------------
+*/
+
+.paletteGrid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+.paletteItemWrap {
+  position: relative;
+  min-width: 0;
+}
+
+.paletteItemWrapSelected {
+  z-index: 5;
+}
+
+.paletteItem {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 5px;
+
+  width: 100%;
+  padding: 5px;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+  font: inherit;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.paletteItem:hover {
+  background: var(--color-surface-soft);
+
+  border-color: var(--color-border);
+}
+
+.paletteItemSelected {
+  z-index: 2;
+
+  background: var(--color-accent-soft);
+
+  border-color: #b9c9fa;
+}
+
+.paletteName {
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.paletteExportActions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+
+  margin-top: 12px;
+}
+
+.paletteExportButton {
+  min-width: 0;
+  min-height: 32px;
+  gap: 4px;
+  padding: 0 5px;
+  font-size: 10px;
+}
+
+.paletteSwatch {
+  width: 100%;
+  aspect-ratio: 1;
+
+  min-height: 34px;
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Empty inspector
+|--------------------------------------------------------------------------
+*/
+
+.emptyInspector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 30px 15px;
+
+  text-align: center;
+}
+
+.emptyInspectorIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  margin-bottom: 12px;
+
+  border-radius: 12px;
+
+  background: var(--color-surface-muted);
+
+  color: var(--color-text-muted);
+}
+
+.emptyInspectorTitle {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emptyInspectorText {
+  margin: 6px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Selected cell
+|--------------------------------------------------------------------------
+*/
+
+.cellInspector {
+  display: flex;
+  flex-direction: column;
+
+  gap: 13px;
+}
+
+.cellColorPreview {
+  display: flex;
+  align-items: center;
+  min-height: 74px;
+
+  gap: 12px;
+
+  padding: 10px;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface-soft);
+}
+
+.cellColorSwatch {
+  flex-shrink: 0;
+
+  width: 52px;
+  height: 52px;
+
+  border: 1px solid rgba(0, 0, 0, 0.12);
+
+  border-radius: 3px;
+}
+
+.cellColorInfo {
+  min-width: 0;
+}
+
+.cellColorName {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cellColorValue {
+  margin: 4px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+
+  font-size: 10px;
+}
+
+.cellColorValue + .cellColorValue {
+  margin-top: 2px;
+}
+
+.cellDetails {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+.cellDetail {
+  padding: 9px;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+}
+
+.cellDetailLabel {
+  margin: 0 0 4px;
+
+  color: var(--color-text-muted);
+
+  font-size: 9px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cellDetailValue {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Workflow
+|--------------------------------------------------------------------------
+*/
+
+.workflowList {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.workflowItem {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  padding: 9px;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface-soft);
+}
+
+.workflowNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 21px;
+  height: 21px;
+
+  border-radius: 50%;
+
+  background: var(--color-primary);
+
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.workflowContent {
+  min-width: 0;
+}
+
+.workflowTitle {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.workflowText {
+  margin: 3px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.paletteColorBubble {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 20;
+
+  display: grid;
+  gap: 5px;
+
+  min-width: 132px;
+  padding: 10px 12px;
+
+  transform: translateX(-50%);
+
+  border: 1px solid var(--color-popover-border);
+  border-radius: 9px;
+
+  background: var(--color-popover);
+  box-shadow: 0 5px 16px rgba(20, 24, 21, 0.18);
+  backdrop-filter: blur(8px);
+
+  color: var(--color-text);
+  font-size: 10px;
+  text-align: left;
+  pointer-events: none;
+}
+
+.paletteColorBubble::before {
+  position: absolute;
+  top: -6px;
+  left: calc(50% - 6px);
+
+  width: 11px;
+  height: 11px;
+
+  transform: rotate(45deg);
+
+  border-top: 1px solid var(--color-popover-border);
+  border-left: 1px solid var(--color-popover-border);
+
+  background: var(--color-popover);
+  content: "";
+}
+
+.paletteItemWrap:nth-child(4n + 1) .paletteColorBubble {
+  left: 0;
+  transform: none;
+}
+
+.paletteItemWrap:nth-child(4n + 1) .paletteColorBubble::before {
+  left: 14px;
+}
+
+.paletteItemWrap:nth-child(4n) .paletteColorBubble {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.paletteItemWrap:nth-child(4n) .paletteColorBubble::before {
+  right: 14px;
+  left: auto;
+}
+
+.paletteColorBubble code {
+  color: var(--color-text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.paletteColorBubble small {
+  color: var(--color-text-muted);
+}
+
+.paletteColorBubble {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 20;
+
+  display: grid;
+  gap: 5px;
+
+  min-width: 132px;
+  padding: 10px 12px;
+
+  transform: translateX(-50%);
+
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 9px;
+
+  background: rgba(247, 249, 250, 0.9);
+  box-shadow: 0 5px 16px rgba(20, 24, 21, 0.18);
+  backdrop-filter: blur(8px);
+
+  color: var(--color-text);
+  font-size: 10px;
+  text-align: left;
+  pointer-events: none;
+}
+
+.paletteColorBubble::before {
+  position: absolute;
+  top: -6px;
+  left: calc(50% - 6px);
+
+  width: 11px;
+  height: 11px;
+
+  transform: rotate(45deg);
+
+  border-top: 1px solid rgba(255, 255, 255, 0.75);
+  border-left: 1px solid rgba(255, 255, 255, 0.75);
+
+  background: rgba(247, 249, 250, 0.9);
+  content: "";
+}
+
+.paletteItem:nth-child(4n + 1) .paletteColorBubble {
+  left: 0;
+  transform: none;
+}
+
+.paletteItem:nth-child(4n + 1) .paletteColorBubble::before {
+  left: 14px;
+}
+
+.paletteItem:nth-child(4n) .paletteColorBubble {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.paletteItem:nth-child(4n) .paletteColorBubble::before {
+  right: 14px;
+  left: auto;
+}
+
+.paletteColorBubble code {
+  color: var(--color-text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.paletteCopyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  min-height: 26px;
+  padding: 0 7px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+}
+
+.paletteCopyButton:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+}
+
+.paletteColorBubble {
+  pointer-events: auto;
+}

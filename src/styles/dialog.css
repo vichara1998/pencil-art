@@ -1,0 +1,296 @@
+/*
+|--------------------------------------------------------------------------
+| Dialog backdrop
+|--------------------------------------------------------------------------
+*/
+
+.dialogBackdrop {
+  position: fixed;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(18, 21, 19, 0.45);
+
+  backdrop-filter: blur(3px);
+
+  z-index: 1000;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Export dialog
+|--------------------------------------------------------------------------
+*/
+
+.exportDialog {
+  width: min(440px, 100%);
+
+  max-height: calc(100vh - 40px);
+
+  overflow: hidden;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-xl);
+
+  background: var(--color-surface);
+
+  box-shadow: var(--shadow-lg);
+
+  animation:
+    dialogEnter 160ms ease-out;
+}
+
+@keyframes dialogEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Dialog header
+|--------------------------------------------------------------------------
+*/
+
+.dialogHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 17px 18px;
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dialogTitle {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.dialogSubtitle {
+  margin: 4px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Dialog body
+|--------------------------------------------------------------------------
+*/
+
+.dialogBody {
+  padding: 18px;
+
+  overflow-y: auto;
+}
+
+.exportOptionGroup {
+  margin-bottom: 20px;
+}
+
+.exportOptionGroup:last-child {
+  margin-bottom: 0;
+}
+
+.exportOptionTitle {
+  margin: 0 0 9px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.exportOptions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 8px;
+}
+
+.exportOption {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  min-height: 58px;
+
+  padding: 10px;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.exportOption:hover {
+  background: var(--color-surface-soft);
+
+  border-color: var(--color-border-strong);
+}
+
+.exportOptionActive {
+  border-color: var(--color-accent);
+
+  background: var(--color-accent-soft);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(59, 111, 245, 0.08);
+}
+
+.exportOptionName {
+  color: var(--color-text);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.exportOptionDescription {
+  margin-top: 4px;
+
+  color: var(--color-text-muted);
+
+  font-size: 10px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Format
+|--------------------------------------------------------------------------
+*/
+
+.exportFormatOptions {
+  display: flex;
+
+  gap: 8px;
+}
+
+.formatButton {
+  flex: 1;
+
+  min-height: 42px;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.formatButton:hover {
+  background: var(--color-surface-soft);
+
+  border-color: var(--color-border-strong);
+}
+
+.formatButtonActive {
+  border-color: var(--color-accent);
+
+  background: var(--color-accent-soft);
+
+  color: var(--color-accent);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Dialog footer
+|--------------------------------------------------------------------------
+*/
+
+.dialogFooter {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  padding: 14px 18px;
+
+  border-top: 1px solid var(--color-border);
+
+  background: var(--color-surface-soft);
+}
+
+.dialogFooter .secondaryButton,
+.dialogFooter .primaryButton {
+  min-width: 90px;
+}
+
+.dialogError {
+  margin-top: 14px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Mobile
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 480px) {
+  .dialogBackdrop {
+    padding: 12px;
+  }
+
+  .exportDialog {
+    border-radius: var(--radius-lg);
+  }
+
+  .exportOptions {
+    grid-template-columns: 1fr;
+  }
+
+  .dialogFooter {
+    flex-direction: column-reverse;
+  }
+
+  .dialogFooter .secondaryButton,
+  .dialogFooter .primaryButton {
+    width: 100%;
+  }
+}
