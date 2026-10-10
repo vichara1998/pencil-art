@@ -24,19 +24,19 @@ const options: {
     value: '1080p',
     label: '1080p',
     description:
-      '1920px maximum dimension',
+      '1920px long edge',
   },
   {
     value: '2k',
     label: '2K',
     description:
-      '2560px maximum dimension',
+      '2560px long edge',
   },
   {
     value: '4k',
     label: '4K',
     description:
-      '3840px maximum dimension',
+      '3840px long edge',
   },
 ]
 
