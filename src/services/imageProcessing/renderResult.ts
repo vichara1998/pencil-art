@@ -14,6 +14,10 @@ export type RenderOptions = {
   paperBrightness: number
   gridSize: number
   zoom: number
+  paletteFilter?: {
+    enabled: boolean
+    selectedColorIndices: number[]
+  }
 }
 
 export function renderResult(
@@ -30,6 +34,7 @@ export function renderResult(
     paperBrightness,
     gridSize,
     zoom,
+    paletteFilter,
   } = options
 
   canvas.width = source.width
@@ -42,6 +47,30 @@ export function renderResult(
   }
 
   context.clearRect(0, 0, canvas.width, canvas.height)
+
+  if (
+    paletteFilter?.enabled &&
+    paletteFilter.selectedColorIndices.length > 0
+  ) {
+    renderPaletteFilter(
+      context,
+      source,
+      palette,
+      paletteFilter.selectedColorIndices,
+    )
+
+    if (mode === 'pencil-grid' || mode === 'color-grid') {
+      drawGrid(
+        context,
+        canvas.width,
+        canvas.height,
+        gridSize,
+        zoom,
+      )
+    }
+
+    return
+  }
 
   if (mode === 'original') {
     context.putImageData(source, 0, 0)
@@ -72,6 +101,62 @@ export function renderResult(
       zoom,
     )
   }
+}
+
+function renderPaletteFilter(
+  context: CanvasRenderingContext2D,
+  source: ImageData,
+  palette: RGB[],
+  selectedColorIndices: number[],
+): void {
+  const output = new ImageData(
+    createPaletteFilteredPixels(
+      source.data,
+      palette,
+      selectedColorIndices,
+    ),
+    source.width,
+    source.height,
+  )
+  context.putImageData(output, 0, 0)
+}
+
+export function createPaletteFilteredPixels(
+  source: Uint8ClampedArray,
+  palette: RGB[],
+  selectedColorIndices: number[],
+): Uint8ClampedArray {
+  const output = new Uint8ClampedArray(source.length)
+  const selectedIndices = new Set(selectedColorIndices)
+
+  for (let offset = 0; offset < source.length; offset += 4) {
+    let closestIndex = -1
+    let smallestDistance = Infinity
+
+    for (let colorIndex = 0; colorIndex < palette.length; colorIndex++) {
+      const color = palette[colorIndex]
+      const red = source[offset] - color[0]
+      const green = source[offset + 1] - color[1]
+      const blue = source[offset + 2] - color[2]
+      const distance = red * red + green * green + blue * blue
+
+      if (distance < smallestDistance) {
+        smallestDistance = distance
+        closestIndex = colorIndex
+      }
+    }
+
+    const selectedColor = selectedIndices.has(closestIndex)
+      ? palette[closestIndex]
+      : null
+
+    output[offset] = selectedColor?.[0] ?? 255
+    output[offset + 1] = selectedColor?.[1] ?? 255
+    output[offset + 2] = selectedColor?.[2] ?? 255
+    output[offset + 3] = 255
+  }
+
+  return output
 }
 
 function renderColorImage(
