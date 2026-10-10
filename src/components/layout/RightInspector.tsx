@@ -15,6 +15,10 @@ type RightInspectorProps = {
   selectedRow: number | null
   selectedColumn: number | null
   selectedColorIndex?: number
+  filterSelectedColors: number[]
+  filterEnabled: boolean
+  onToggleFilterColor: (index: number) => void
+  onFilterEnabledChange: (enabled: boolean) => void
 }
 
 export function RightInspector({
@@ -23,6 +27,10 @@ export function RightInspector({
   selectedRow,
   selectedColumn,
   selectedColorIndex,
+  filterSelectedColors,
+  filterEnabled,
+  onToggleFilterColor,
+  onFilterEnabledChange,
 }: RightInspectorProps) {
   return (
     <div className="rightInspectorContent">
@@ -31,6 +39,10 @@ export function RightInspector({
         selectedColor={
           selectedColorIndex
         }
+        filterSelectedColors={filterSelectedColors}
+        filterEnabled={filterEnabled}
+        onToggleFilterColor={onToggleFilterColor}
+        onFilterEnabledChange={onFilterEnabledChange}
       />
 
       <SelectedCellInfo
