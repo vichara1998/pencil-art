@@ -1,4 +1,5 @@
 import { Download, ImagePlus, Moon, Sun } from "lucide-react";
+import logo from "../../assets/grid-pencil-art-logo.png";
 
 type AppHeaderProps = {
   theme: "light" | "dark";
@@ -22,7 +23,7 @@ export function AppHeader({
       <div className="brand">
         <img
           className="brandLogo"
-          src="/images/grid-pencil-art-logo.png"
+          src={logo}
           alt="Grid Pencil Art — Photo to Painting Guide"
         />
 
