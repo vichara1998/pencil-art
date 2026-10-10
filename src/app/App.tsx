@@ -353,6 +353,9 @@ export default function App() {
             showNumbers={settings.showNumbers}
             resetViewKey={viewResetKey}
             busy={processing.busy}
+            processingProgress={processing.progress}
+            processingStage={processing.stage}
+            uploadProgress={upload.uploadProgress}
             error={processing.error}
             uploadError={upload.error}
             isDragging={upload.isDragging}
