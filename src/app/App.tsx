@@ -5,6 +5,7 @@ import type { MouseEvent } from "react";
 import {
   AppHeader,
   CenterWorkspace,
+  HomeConfirmDialog,
   LeftSidebar,
   RightInspector,
   Workspace,
@@ -35,6 +36,7 @@ export default function App() {
 
   const settings = useEditorSettings();
   const [viewResetKey, setViewResetKey] = useState(0);
+  const [isHomeConfirmOpen, setIsHomeConfirmOpen] = useState(false);
   const [showZoomProcessing, setShowZoomProcessing] = useState(false);
   const [zoomOperationPending, setZoomOperationPending] = useState(false);
   const previousZoomRef = useRef(settings.zoom);
@@ -183,6 +185,28 @@ export default function App() {
     settings.setZoom(1);
     setViewResetKey((current) => current + 1);
   }, [settings.setZoom]);
+
+  const handleReturnHome = useCallback(() => {
+    upload.clearImage();
+    canvas.clearSelection();
+    settings.setZoom(1);
+    setViewResetKey((current) => current + 1);
+    panels.showLeftPanel();
+    panels.showRightPanel();
+    setIsHomeConfirmOpen(false);
+  }, [
+    upload.clearImage,
+    canvas.clearSelection,
+    settings.setZoom,
+    panels.showLeftPanel,
+    panels.showRightPanel,
+  ]);
+
+  const handleCloseProjectRequest = useCallback(() => {
+    if (upload.image || upload.uploadProgress) {
+      setIsHomeConfirmOpen(true);
+    }
+  }, [upload.image, upload.uploadProgress]);
 
   /*
   |--------------------------------------------------------------------------
@@ -351,6 +375,7 @@ export default function App() {
         onThemeChange={setTheme}
         onUpload={upload.openFilePicker}
         onDownload={imageExport.openExport}
+        onCloseProject={handleCloseProjectRequest}
         canDownload={Boolean(upload.image)}
         hasImage={Boolean(upload.image)}
       />
@@ -492,6 +517,15 @@ export default function App() {
           exporting={imageExport.exporting}
         />
       )}
+
+      <HomeConfirmDialog
+        open={
+          isHomeConfirmOpen &&
+          Boolean(upload.image || upload.uploadProgress)
+        }
+        onClose={() => setIsHomeConfirmOpen(false)}
+        onConfirm={handleReturnHome}
+      />
     </div>
   );
 }
