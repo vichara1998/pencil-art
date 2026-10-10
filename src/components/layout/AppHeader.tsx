@@ -1,4 +1,4 @@
-import { Download, ImagePlus, Moon, Sun } from "lucide-react";
+import { Download, ImagePlus, Moon, Sun, X } from "lucide-react";
 import logo from "../../assets/grid-pencil-art-logo.png";
 
 type AppHeaderProps = {
@@ -6,6 +6,7 @@ type AppHeaderProps = {
   onThemeChange: (theme: "light" | "dark") => void;
   onUpload: () => void;
   onDownload: () => void;
+  onCloseProject: () => void;
   canDownload: boolean;
   hasImage: boolean;
 };
@@ -15,17 +16,26 @@ export function AppHeader({
   onThemeChange,
   onUpload,
   onDownload,
+  onCloseProject,
   canDownload,
   hasImage,
 }: AppHeaderProps) {
   return (
     <header className="topbar">
       <div className="brand">
-        <img
-          className="brandLogo"
-          src={logo}
-          alt="Grid Pencil Art — Photo to Painting Guide"
-        />
+        <button
+          type="button"
+          className="brandHomeButton"
+          onClick={onCloseProject}
+          aria-label="Go to upload screen"
+          title="Go to upload screen"
+        >
+          <img
+            className="brandLogo"
+            src={logo}
+            alt="Grid Pencil Art — Photo to Painting Guide"
+          />
+        </button>
 
         <span className={hasImage ? "statusPill active" : "statusPill"}>
           {hasImage ? "Ready to export" : "Waiting for image"}
@@ -33,6 +43,19 @@ export function AppHeader({
       </div>
 
       <div className="topbarActions">
+        {hasImage && (
+          <button
+            type="button"
+            className="secondaryButton"
+            onClick={onCloseProject}
+            aria-label="Close project"
+            title="Close project"
+          >
+            <X size={17} />
+            <span>Close project</span>
+          </button>
+        )}
+
         <div className="themeToggle" role="group" aria-label="Color theme">
           <button
             type="button"
