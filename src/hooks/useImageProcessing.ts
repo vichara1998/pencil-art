@@ -33,7 +33,12 @@ type UseImageProcessingOptions = {
   image: HTMLImageElement | null
   sourceCanvasRef: React.RefObject<HTMLCanvasElement | null>
   displayCanvasRef: React.RefObject<HTMLCanvasElement | null>
-  settings: EditorSettings
+  settings: EditorSettings & {
+    paletteFilter: {
+      enabled: boolean
+      selectedColorIndices: number[]
+    }
+  }
 }
 
 export function useImageProcessing({
@@ -232,6 +237,7 @@ export function useImageProcessing({
             paperBrightness: settings.pencil.paperBrightness,
             gridSize: settings.grid.size,
             zoom: settings.zoom.zoom,
+            paletteFilter: settings.paletteFilter,
           },
         )
 
