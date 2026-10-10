@@ -6,6 +6,7 @@ type AppHeaderProps = {
   onUpload: () => void;
   onDownload: () => void;
   canDownload: boolean;
+  hasImage: boolean;
 };
 
 export function AppHeader({
@@ -14,13 +15,20 @@ export function AppHeader({
   onUpload,
   onDownload,
   canDownload,
+  hasImage,
 }: AppHeaderProps) {
   return (
     <header className="topbar">
       <div className="brand">
-        <div className="brandTitle">Grid Pencil Art</div>
+        <img
+          className="brandLogo"
+          src="/images/grid-pencil-art-logo.png"
+          alt="Grid Pencil Art — Photo to Painting Guide"
+        />
 
-        <div className="brandSubtitle">Photo to painting guide</div>
+        <span className={hasImage ? "statusPill active" : "statusPill"}>
+          {hasImage ? "Ready to export" : "Waiting for image"}
+        </span>
       </div>
 
       <div className="topbarActions">
